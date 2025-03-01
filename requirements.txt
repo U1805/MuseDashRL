@@ -1,0 +1,7 @@
+Pillow
+numpy
+torch
+torchvision
+opencv-contrib-python
+pyautogui
+pydirectinput
