@@ -2,16 +2,12 @@
 
 A Deep Q-Learning (DQN) agent that learns to play Muse Dash. This project uses computer vision and reinforcement learning to create an AI that can play the rhythm game Muse Dash.
 
-<center>
-
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.6.0-red)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.11.0-green)
 ![Game](https://img.shields.io/badge/Game-MuseDash-pink)
 
 ![Status](https://img.shields.io/badge/Status-In_Development-yellow)
 ![License](https://img.shields.io/badge/License-MIT-blue)
-
-</center>
 
 ## Overview
 
@@ -41,12 +37,6 @@ This project implements a Deep Q-Network (DQN) that learns to play Muse Dash by:
 - FORWARD (no key)
 - BOTH (F+J keys)
 
-### Advanced Actions **⏳TODO**
-- HOLD_UP_TAP_DOWN (F key held + J key tap)
-- HOLD_DOWN_TAP_UP (J key held + F key tap)
-- RAPID_BOTH (F+J keys rapid press)
-
-
 ## Setup and Usage
 
 1. Install the required dependencies:
@@ -54,10 +44,10 @@ This project implements a Deep Q-Network (DQN) that learns to play Muse Dash by:
    pip install -r requirements.txt
    ```
 
-2. Make sure Muse Dash is installed, then launch the game on 1920*1080 and select the song that randomly play.
+2. Make sure Muse Dash is installed, then launch the game on 1920*1080 and select a song.
 Stop at the difficulty selection screen.
 
-3. Run the training script:
+3. Run the training script: ⏳DOING
    ```bash
    python dqn.py
    ```

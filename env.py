@@ -7,14 +7,14 @@ import pydirectinput
 from PIL import ImageGrab
 import cv2
 
-pydirectinput.PAUSE = 0.0001
+pydirectinput.PAUSE = 0.000001
 
 
 class Action:
-    UP = 0
-    DOWN = 1
-    FORWARD = 2
-    BOTH = 3
+    UP = 0      # hold up and not hold down
+    DOWN = 1    # hold down and not hold up
+    FORWARD = 2 # not hold up or down
+    BOTH = 3    # hold up and hold down
 
 
 class Environment:
@@ -38,7 +38,6 @@ class Environment:
         self.playing = False
         self.combo = False
         self.score = None
-        self.current_hold = self.actions[Action.FORWARD]
         self.last_action = Action.FORWARD
         print("\nGame can be connected (select song)")
         thread_crashed = threading.Thread(target=self.crashed_watcher)
@@ -75,7 +74,7 @@ class Environment:
                 continue
 
             if not self.deploy:
-                self.send_menu_key("esc")
+                self.send_key("esc")
                 self.playing = False
 
     def score_watcher(self):
@@ -85,6 +84,10 @@ class Environment:
                     self.score = "perfect"
                 elif self.find_score("buttons/great.png"):
                     self.score = "great"
+                elif self.find_score("buttons/note.png"):
+                    self.score = "perfect"
+                elif self.find_score("buttons/pass.png"):
+                    self.score = "perfect"
                 else:
                     self.score = None
             time.sleep(0.05)
@@ -93,6 +96,8 @@ class Environment:
         while True:
             if self.playing:
                 if self.find_combo("buttons/combo.png"):
+                    self.combo = True
+                elif self.find_combo("buttons/combo2.png"):
                     self.combo = True
                 else:
                     self.combo = False
@@ -129,20 +134,7 @@ class Environment:
     def get_combo(self):
         return self.combo
 
-    def send_action_key(self, key):
-        if not self.client.isActive:
-            try:
-                self.client.activate()
-            except:
-                pass
-
-        for i in self.current_hold:
-            pydirectinput.keyUp(i)
-        for i in key:
-            pydirectinput.keyDown(i)
-        self.current_hold = key
-
-    def send_menu_key(self, key):
+    def send_key(self, key):
         if not self.client.isActive:
             try:
                 self.client.activate()
@@ -172,7 +164,7 @@ class Environment:
         try:
             pyautogui.locateOnScreen(
                 score_path,
-                confidence=0.9,
+                confidence=0.85,
                 region=(
                     int(self.client.box.left),
                     int(self.client.box.top + self.client.box.height * 0.1),
@@ -226,20 +218,20 @@ class Environment:
         self.score = None
         while True:
             if self.find_image("buttons/start.png"):
-                time.sleep(1)
-                self.send_menu_key("enter")
+                time.sleep(0.2)
+                self.send_key("enter")
                 if self.debug:
                     print("Game started")
                 break
             if self.find_image("buttons/restart_button.png"):
-                time.sleep(1)
-                self.send_menu_key(["left", "enter"])
+                time.sleep(0.2)
+                self.send_key(["left", "enter"])
                 if self.debug:
                     print("Game restarted")
                 break
             if self.find_image("buttons/restart.png"):
-                time.sleep(1)
-                self.send_menu_key(["r"])
+                time.sleep(0.2)
+                self.send_key(["r"])
                 if self.debug:
                     print("Game restarted")
                 break
@@ -254,13 +246,19 @@ class Environment:
     def do_action(self, action):
         """
         Performs action and returns the updated status
-        """
-        if action != Action.FORWARD:
-            # Send key for non-forward actions
-            self.send_action_key(self.actions[action])
-        else:
-            # Small delay even for forward action to maintain timing
-            time.sleep(0.0001)
+        """        
+        if not self.client.isActive:
+            try:
+                self.client.activate()
+            except:
+                pass
+
+        for i in self.actions[self.last_action]:
+            if i not in self.actions[action]:
+                pydirectinput.keyUp(i)
+        for i in self.actions[action]:
+            if i not in self.actions[self.last_action]:
+                pydirectinput.keyDown(i)
 
         # Capture state after action
         return self.get_state(action)

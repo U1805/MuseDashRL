@@ -201,7 +201,7 @@ if __name__ == "__main__":
     policy_net = DQN(height, width, n_actions).float().to(device)
     target_net = DQN(height, width, n_actions).float().to(device)
     
-    # policy_net.load_state_dict(torch.load("meta/dqn_policy_ep_450_reward_131.pt", map_location=device))
+    policy_net.load_state_dict(torch.load("meta/dqn_policy_ep_2030_reward_110.pt", map_location=device))
     target_net.load_state_dict(policy_net.state_dict())
     target_net.eval()
     
